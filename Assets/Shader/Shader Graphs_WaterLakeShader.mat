@@ -30,7 +30,7 @@ Material:
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 2
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap:
@@ -63,26 +63,27 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Alpha: 0.053
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _CastShadows: 1
-    - _CausticOffset: 1.77
+    - _CausticOffset: 3.98
     - _Cull: 2
-    - _Density: 1.21
+    - _Density: 0.81
     - _Depth: 1
-    - _Discplacement: 0.7
+    - _Discplacement: 0
     - _DstBlend: 10
-    - _NormalStrength: 0.231
-    - _Power: 1.73
+    - _NormalStrength: 0.3
+    - _Power: -3.69
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ShallowWaterColor: 0
     - _Smoothness: 1
     - _SrcBlend: 1
-    - _Strength: 0.225
+    - _Strength: 0.3
     - _Surface: 1
     - _Wave1Speed: 70
     - _Wave2Speed: -70
@@ -91,6 +92,6 @@ Material:
     - _ZWrite: 0
     - _ZWriteControl: 0
     m_Colors:
-    - _DeepWaterColor: {r: 0.20150226, g: 0.3115924, b: 0.3433962, a: 0.9647059}
-    - _ShallowWaterColor: {r: 0.274069, g: 0.33507693, b: 0.3433962, a: 0.20392157}
+    - _DeepWaterColor: {r: 0.20530432, g: 0.2570066, b: 0.27547166, a: 0.9843137}
+    - _ShallowWaterColor: {r: 0.40573153, g: 0.47102168, b: 0.4943396, a: 0.015686275}
   m_BuildTextureStacks: []

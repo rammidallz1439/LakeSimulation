@@ -57,7 +57,7 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _Aplha: 0.237
+    - _Aplha: 0.165
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _CastShadows: 1
@@ -73,7 +73,7 @@ Material:
     - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0
-    - _density: 1
+    - _density: 0.5
     - _offset: 1
     - _power: 2.57
     m_Colors:
