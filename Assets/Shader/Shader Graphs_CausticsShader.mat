@@ -57,7 +57,7 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _Aplha: 0.165
+    - _Aplha: 0.065
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _CastShadows: 1
@@ -75,7 +75,7 @@ Material:
     - _ZWriteControl: 0
     - _density: 0.5
     - _offset: 1
-    - _power: 2.57
+    - _power: 6.08
     m_Colors:
     - _Color: {r: 0.84721243, g: 0.95693976, b: 0.96981126, a: 1}
   m_BuildTextureStacks: []

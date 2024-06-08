@@ -1,89 +1,104 @@
-using Unity.Jobs;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class RippleEffect : MonoBehaviour
 {
-    public Material RippleMaterial;
-    public Texture2D RippleTexture;
+    public float rippleSpeed = 5.0f;
+    public float rippleDecay = 0.95f;
+    public float rippleMaxIntensity = 0.1f;
+    public float rippleSize = 1.0f;
 
-    float[][] rippleN, rippleNM1, rippleNP2;
-    float lx = 10;//width
-    float ly = 10;//height
+    private Mesh mesh;
+    private Vector3[] originalVertices;
+    private Vector3[] displacedVertices;
+    private List<Ripple> ripples = new List<Ripple>();
 
-    [SerializeField] float densityX = 0.1f; // x-axis density
-
-    float densityY { get { return densityX; } } // y-axis density
-    int Resx, Resy; // resolution
-
-    public float Offset = 0.5f;
-    public float c = 10;
-    public float TimeStep;
-
-    float currentTime;
-    private void Start()
+    void Start()
     {
-        Resx = Mathf.FloorToInt(lx / densityX);
-        Resy = Mathf.FloorToInt(ly / densityY);
-        RippleTexture = new Texture2D(Resx, Resy, TextureFormat.RGBA32, false);
-
-        rippleN = new float[Resx][];
-        rippleNM1 = new float[Resx][];
-        rippleNP2 = new float[Resx][];
-        for (int i = 0; i < Resx; i++)
-        {
-            rippleN[i] = new float[Resy];
-            rippleNM1[i] = new float[Resy];
-            rippleNP2[i] = new float[Resy];
-        }
-
-        RippleMaterial.SetTexture("_MainTex", RippleTexture);
-        RippleMaterial.SetTexture("_Displacement", RippleTexture);
+        mesh = GetComponent<MeshFilter>().mesh;
+        originalVertices = mesh.vertices;
+        displacedVertices = new Vector3[originalVertices.Length];
     }
-    private void Update()
-    {
-        RippleStep();
-        ApplyMatrixToTexture(rippleN, ref RippleTexture,2);
-    }
-    void RippleStep()
-    {
-        TimeStep = Offset * densityX / c;
-        currentTime += densityX;
 
-        for (int i = 0; i < Resx; i++)
+    void Update()
+    {
+        // Check for mouse click
+        if (Input.GetMouseButtonDown(0))
         {
-            for (int j = 0; j < Resy; j++)
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit))
             {
-                rippleNM1[i][j] = rippleN[i][j];
-                rippleN[i][j] = rippleNP2[i][j];
+                if (hit.transform == transform)
+                {
+                    ripples.Add(new Ripple(hit.point, rippleMaxIntensity, rippleDecay, rippleSpeed, rippleSize));
+                }
             }
         }
-        rippleN[50][50]=TimeStep*TimeStep*20*Mathf.Sin(currentTime*Mathf.Rad2Deg);
-        for (int i = 1; i < Resx - 1; i++)
-        {
-            for (int j = 1; j < Resy - 1; j++)
-            {
-                float x = rippleN[i][j];
-                float y = rippleN[i + 1][j];
-                float z = rippleN[i - 1][j];
-                float x1 = rippleN[i][j + 1];
-                float y1 = rippleN[i][j - 1];
-                float z1 = rippleNM1[i][j];
-                rippleNP2[i][j] = 2f * x - z1 + Offset * Offset * (y1 + x1 + z + y - 4f * x);// ripple equation ;
-            }
-        }
+
+        // Update ripples and the mesh
+        UpdateRipples();
     }
 
-    void ApplyMatrixToTexture(float[][] state, ref Texture2D texture,float colorMultiplier)
+    void UpdateRipples()
     {
-        for (int i = 0; i < Resx; i++)
+        // Reset displaced vertices to the original
+        originalVertices.CopyTo(displacedVertices, 0);
+
+        // Update each ripple and apply its effect to the mesh
+        for (int i = ripples.Count - 1; i >= 0; i--)
         {
-            for (int j = 0; j < Resy; j++)
+            Ripple ripple = ripples[i];
+            if (ripple.UpdateRipple(Time.deltaTime))
             {
-                float val = state[i][j]*colorMultiplier;
-                texture.SetPixel(i, j, new Color(val + 0.5f, val + 0.5f, val + 0.5f, 1f));
+                ApplyRippleEffect(ripple);
+            }
+            else
+            {
+                ripples.RemoveAt(i);
             }
         }
-        texture.Apply();
+
+        // Update the mesh with displaced vertices
+        mesh.vertices = displacedVertices;
+        mesh.RecalculateNormals();
     }
 
+    void ApplyRippleEffect(Ripple ripple)
+    {
+        for (int i = 0; i < originalVertices.Length; i++)
+        {
+            Vector3 worldPos = transform.TransformPoint(originalVertices[i]);
+            float distance = Vector3.Distance(worldPos, ripple.Center) / ripple.Size;
+            float rippleEffect = Mathf.Sin(distance - ripple.Time) * ripple.Intensity / (1.0f + distance);
+            displacedVertices[i] += Vector3.up * rippleEffect;
+        }
+    }
+
+    private class Ripple
+    {
+        public Vector3 Center { get; private set; }
+        public float Intensity { get; private set; }
+        public float Decay { get; private set; }
+        public float Speed { get; private set; }
+        public float Size { get; private set; }
+        public float Time { get; private set; }
+
+        public Ripple(Vector3 center, float intensity, float decay, float speed, float size)
+        {
+            Center = center;
+            Intensity = intensity;
+            Decay = decay;
+            Speed = speed;
+            Size = size;
+            Time = 0;
+        }
+
+        public bool UpdateRipple(float deltaTime)
+        {
+            Time += deltaTime * Speed;
+            Intensity *= Decay;
+            return Intensity > 0.001f;
+        }
+    }
 }

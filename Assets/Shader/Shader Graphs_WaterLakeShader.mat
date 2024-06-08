@@ -74,8 +74,9 @@ Material:
     - _Density: 0.81
     - _Depth: 1
     - _Discplacement: 0
+    - _Displacement: 0.001
     - _DstBlend: 10
-    - _NormalStrength: 0.3
+    - _NormalStrength: 0.4
     - _Power: -3.69
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -92,6 +93,7 @@ Material:
     - _ZWrite: 0
     - _ZWriteControl: 0
     m_Colors:
-    - _DeepWaterColor: {r: 0.20530432, g: 0.2570066, b: 0.27547166, a: 0.9843137}
-    - _ShallowWaterColor: {r: 0.40573153, g: 0.47102168, b: 0.4943396, a: 0.015686275}
+    - _DeepWaterColor: {r: 0.20721248, g: 0.30788454, b: 0.335849, a: 0.9843137}
+    - _MainTex: {r: 0.15411171, g: 0.32234493, b: 0.4188679, a: 0}
+    - _ShallowWaterColor: {r: 0.5282377, g: 0.60814166, b: 0.6377357, a: 0}
   m_BuildTextureStacks: []
