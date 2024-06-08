@@ -25,4 +25,3 @@ you have button at right corner of screen to change camera view to a Fps player 
 you can explore arround while you are in Fps mode
 you can interact with water when you are in Camera view and also in Fps view
 Change intensity and scale of ripples with sliders on top
-
