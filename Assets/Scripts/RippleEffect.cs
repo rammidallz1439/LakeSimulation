@@ -13,6 +13,7 @@ public class RippleEffect : MonoBehaviour
     private Vector3[] displacedVertices;
     private List<Ripple> ripples = new List<Ripple>();
 
+    [SerializeField] private SimulationUiHandler simulationUiHandler;
     void Start()
     {
         mesh = GetComponent<MeshFilter>().mesh;
@@ -22,20 +23,25 @@ public class RippleEffect : MonoBehaviour
 
     void Update()
     {
-        // Check for mouse click
-        if (Input.GetMouseButtonDown(0))
+        rippleMaxIntensity = simulationUiHandler.RippleIntensitySlider.value;
+        rippleSize = simulationUiHandler.RippleScaleSlider.value;
+
+        if (!simulationUiHandler.IsPaused)
         {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit))
+            // Check for mouse click
+            if (Input.GetMouseButtonDown(0))
             {
-                if (hit.transform == transform)
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit))
                 {
-                    ripples.Add(new Ripple(hit.point, rippleMaxIntensity, rippleDecay, rippleSpeed, rippleSize));
+                    if (hit.transform == transform)
+                    {
+                        ripples.Add(new Ripple(hit.point, rippleMaxIntensity, rippleDecay, rippleSpeed, rippleSize));
+                    }
                 }
             }
         }
-
         // Update ripples and the mesh
         UpdateRipples();
     }
@@ -71,6 +77,13 @@ public class RippleEffect : MonoBehaviour
             Vector3 worldPos = transform.TransformPoint(originalVertices[i]);
             float distance = Vector3.Distance(worldPos, ripple.Center) / ripple.Size;
             float rippleEffect = Mathf.Sin(distance - ripple.Time) * ripple.Intensity / (1.0f + distance);
+
+            // Ensure the effect starts at zero at the ripple center
+            if (distance < ripple.Time)
+            {
+                rippleEffect *= (distance / ripple.Time);
+            }
+
             displacedVertices[i] += Vector3.up * rippleEffect;
         }
     }
